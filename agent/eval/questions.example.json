@@ -1,5 +1,0 @@
-[
-  {"q": "On what date was the agreement executed?", "gold": [{"doc": "agreement.pdf", "page": 1}]},
-  {"q": "What is the indemnity limit?", "gold": [{"text": "Rs. 5,00,000"}]},
-  {"q": "Was stamp duty paid on the instrument?", "gold": [{"doc": "plaint.pdf"}]}
-]

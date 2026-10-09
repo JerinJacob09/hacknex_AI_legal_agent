@@ -1,0 +1,15 @@
+# CPU-only PyTorch (the default Linux wheel pulls in ~2 GB of CUDA libraries that Render cannot use).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+streamlit
+smolagents[litellm]
+langchain-chroma
+chromadb
+langchain-huggingface
+sentence-transformers
+langchain-core
+langchain-text-splitters
+pypdf
+python-docx
+datasets
+# Optional legal NER (en_legal_ner_trf) is left out: it needs extra RAM that a small Render instance does not have.

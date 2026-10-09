@@ -1,0 +1,39 @@
+# Render Blueprint for NYAYA-QUANTUM (Streamlit UI). The LLM is NOT hosted here; see DEPLOY_RENDER.md.
+services:
+  - type: web
+    name: nyaya-quantum
+    runtime: python
+    plan: standard            # 2 GB RAM. Do not use free/starter: torch + embeddings need more than 512 MB.
+    region: singapore         # closest Render region to India
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: streamlit run nyaya_quantum_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --browser.gatherUsageStats false
+    healthCheckPath: /_stcore/health
+    disk:
+      name: nyaya-data        # keeps the Chroma index and downloaded models across deploys/restarts
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: NYAYA_PERSIST_DIR
+        value: /var/data/nyaya_chroma_store
+      - key: HF_HOME
+        value: /var/data/hf
+      - key: NYAYA_EMBEDDING
+        value: BAAI/bge-small-en-v1.5
+      # --- LLM: choose ONE of the two modes ---
+      # Mode A (default): your own Ollama server somewhere reachable from Render
+      - key: NYAYA_LLM_BACKEND
+        value: ollama
+      - key: NYAYA_OLLAMA_HOST     # e.g. https://your-tunnel-or-server (set in the Render dashboard)
+        sync: false
+      - key: NYAYA_MODEL
+        value: qwen2.5:7b
+      # Mode B: hosted API through LiteLLM. Set NYAYA_LLM_BACKEND=litellm, NYAYA_LLM_MODEL, and the provider key
+      # (GROQ_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY, ...) in the dashboard.
+      - key: NYAYA_LLM_MODEL
+        sync: false
+      - key: NYAYA_APP_PASSWORD    # strongly recommended: the app has no login of its own
+        sync: false
+      - key: INDIANKANOON_TOKEN
+        sync: false
